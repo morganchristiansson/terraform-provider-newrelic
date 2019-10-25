@@ -43,7 +43,7 @@ func TestAccNewRelicInfraAlertCondition_Basic(t *testing.T) {
 
 func TestAccNewRelicInfraAlertCondition_Where(t *testing.T) {
 	rName := acctest.RandString(5)
-	whereClause := "(`hostname` LIKE '%cassandra%')"
+	whereClause := "(`clusterName` LIKE '%')"
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
@@ -317,9 +317,10 @@ resource "newrelic_infra_alert_condition" "foo" {
   policy_id = "${newrelic_alert_policy.foo.id}"
 
   name          = "tf-test-%[1]s"
-  type          = "infra_process_running"
-  process_where = "commandName = 'java'"
-  comparison    = "equal"
+  type          = "infra_metric"
+  event         = "K8sContainerSample"
+  select        = "restartCount"
+  comparison    = "above"
   where         = "%[2]s"
 
   critical {
